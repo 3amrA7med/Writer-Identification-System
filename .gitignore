@@ -1,6 +1,8 @@
 
 iam_dataset/
+.ipynb_checkpoints
 .ipynb_checkpoints/
+*/.ipynb_checkpoints/*
 test/
 data/
 dataset/
