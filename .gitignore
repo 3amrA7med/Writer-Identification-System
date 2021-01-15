@@ -6,3 +6,4 @@ iam_dataset/
 test/
 data/
 dataset/
+__pycache__
