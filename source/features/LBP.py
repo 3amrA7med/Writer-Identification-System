@@ -2,6 +2,7 @@ import os
 from multiprocessing import Pool
 from skimage import feature
 import numpy as np
+import time
 
 
 class LocalBinaryPatterns:
@@ -36,7 +37,7 @@ class LocalBinaryPatterns:
 
 
 img_lbp = 0
-def lbp(i):
+def lbp(i, image, width):
     global img_lbp
     for j in range(0, width): 
         img_lbp[i, j] = lbp_calculated_pixel(image, i, j) 
@@ -47,7 +48,7 @@ def lbp_custom(image):
     img_lbp = np.zeros((height, width), 
                    np.uint8)
     pool = Pool(os.cpu_count())
-    pool.map(lbp, range(0, height))
+    pool.map(lbp, range(0, height), image, width)
     pool.join()
     pool.close()
     return img_lbp

@@ -42,7 +42,7 @@ def load_test():
     return imgs,imgs_1,imgs_2,imgs_3
     # TODO:  this will be removed later to here
 
-def feature_extractor(imgs_1,imgs_2,img_3,desc):
+def feature_extractor(imgs_1,imgs_2,imgs_3,desc):
     # initialize the local binary patterns descriptor along with
     # the data and label lists
     # desc = LocalBinaryPatterns(24, 8)
@@ -83,7 +83,7 @@ def classifier(data, labels):
     model = make_pipeline(StandardScaler(), LinearSVC(random_state=0, tol=1e-5))
     model.fit(data, labels)
     end_time = time.time()
-    print(end_time - start_time)
+    print("apllying classifier time: ", end_time - start_time)
     return model
 
 def test(model, imgs, desc):
