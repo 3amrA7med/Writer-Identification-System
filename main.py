@@ -39,14 +39,15 @@ def writer_identification(generate, number_of_test_cases):
     # program main loop
     total = 0
     accurate = 0
-    for i in range(20):
+    avg_time = []
+    for i in range(100):
         path = "./test/"
 
         if i < 9:
             path = path + str(0) + str(i+1) + "/"
         else:
             path = path + str(i+1) + "/"
-
+        start_time = time.time()
         w11 = cv2.imread(path + str(1) + "/1.PNG")
         sentences11 = preprocessing(w11)
         w12 = cv2.imread(path + str(1) + "/2.png")
@@ -67,7 +68,6 @@ def writer_identification(generate, number_of_test_cases):
         imgs_2 = sentences21 + sentences22
         imgs_3 = sentences31 + sentences32
 
-        start_time = time.time()
         # program logic here
         # Extract features from the three writers
         data, labels, desc = feature_extractor(imgs_1,imgs_2,imgs_3)
@@ -77,20 +77,23 @@ def writer_identification(generate, number_of_test_cases):
 
         # Classify the test
         results = test(model, sentences_test, desc)
-
+        end_time = time.time()
+        print("Test#" + str(i+1) + ", time: " + str(end_time - start_time))
+        f_time.write(str(end_time - start_time) + "\n")
+        avg_time.append(end_time - start_time)
         # Vote on classification
         winner = vote_result(results)
-        print("Winner is",winner,"test result is",test_results[i], "for test number",i+1)
-        total += 1
         if winner == test_results[i]:
+            print("Test#" + str(i+1) + " succeeded")
             accurate += 1
-        end_time = time.time()
-
-        f_time.write(str(end_time - start_time) + "\n")
+        else:
+            print("Test#" + str(i+1) + " failed")
+        total += 1
 
     if total > 0:
-        print("Total is",total,"of which",accurate,"are accurate")
-        print("Accuracy is", float(accurate)/total*100,"%")
+        print("Total is", total, "of which", accurate, "are accurate")
+        print("Accuracy is", float(accurate)/total*100, "%")
+        print("Average Time:" + str(float(sum(avg_time))/len(avg_time)))
 
     f_time.close()
     f_results.close()
