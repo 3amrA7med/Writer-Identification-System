@@ -17,7 +17,7 @@ def extract_hand_written(img):
     thresh_inv = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
 
     # Apply noise removal.
-    blur = cv2.blur(thresh_inv, (7, 7))
+    blur = cv2.blur(thresh_inv, (3, 3))
 
     # Apply thresholding for better and more general output.
     binary = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
@@ -58,7 +58,7 @@ def extract_hand_written(img):
 
     # Crop the original image and the dilated image
     segmented_image = np.copy(img_dilation[first_crop_line_height + 10:second_crop_line_height - 10, :])
-    segmented_image_original = np.copy(img[first_crop_line_height + 10:second_crop_line_height - 10, :])
+    segmented_image_original = np.copy(gray[first_crop_line_height + 10:second_crop_line_height - 10, :])
     return segmented_image, segmented_image_original
 
 
@@ -94,7 +94,8 @@ def detect_sentences(segmented_image, segmented_image_original):
                 initial_height = 0
             seg_sentence = np.copy(segmented_image_original[initial_height:int(bounding_rectangles[i][1])
                                                             + difference_in_height,
-                                   int(bounding_rectangles[i][0]):int(bounding_rectangles[i][0]) + difference_in_width])
+                                   int(bounding_rectangles[i][0]) + 50:int(bounding_rectangles[i][0])
+                                                                       + difference_in_width - 50])
             sentences.append(seg_sentence)
         i -= 1
     return sentences
@@ -104,15 +105,13 @@ def preprocessing(img):
     """
     This function pre-process the image and return list of sentences.
     """
-    start_time = time.time()
+    # start_time = time.time()
     # Extract hand written part
     segmented_image, segmented_image_original = extract_hand_written(img)
     # Apply noise removal.
-    segmented_image_original = cv2.blur(segmented_image_original, (7, 7))
-    # Convert to grayscale
-    segmented_image_original = cv2.cvtColor(segmented_image_original, cv2.COLOR_BGR2GRAY)
+    segmented_image_original = cv2.blur(segmented_image_original, (3, 3))
     # Extract sentences
     sentences = detect_sentences(segmented_image, segmented_image_original)
-    end_time = time.time()
-    print("Preprocessing time:"+str(end_time - start_time))
+    # end_time = time.time()
+    # print("Preprocessing time:"+str(end_time - start_time))
     return sentences

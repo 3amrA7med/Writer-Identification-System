@@ -40,10 +40,11 @@ def load_test():
     return imgs,imgs_1,imgs_2,imgs_3
     # TODO:  this will be removed later to here
 
-def feature_extractor(imgs_1,imgs_2,imgs_3):
+
+def feature_extractor(imgs_1, imgs_2, imgs_3):
     # initialize the local binary patterns descriptor along with
     # the data and label lists
-    desc = LocalBinaryPatterns(4, 3)
+    desc = LocalBinaryPatterns(8, 3)
     data = []
     labels = []
 
