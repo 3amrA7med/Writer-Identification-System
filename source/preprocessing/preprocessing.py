@@ -1,3 +1,5 @@
+import time
+
 import numpy as np
 import cv2
 import operator
@@ -102,6 +104,7 @@ def preprocessing(img):
     """
     This function pre-process the image and return list of sentences.
     """
+    start_time = time.time()
     # Extract hand written part
     segmented_image, segmented_image_original = extract_hand_written(img)
     # Apply noise removal.
@@ -110,4 +113,6 @@ def preprocessing(img):
     segmented_image_original = cv2.cvtColor(segmented_image_original, cv2.COLOR_BGR2GRAY)
     # Extract sentences
     sentences = detect_sentences(segmented_image, segmented_image_original)
+    end_time = time.time()
+    print("Preprocessing time:"+str(end_time - start_time))
     return sentences
