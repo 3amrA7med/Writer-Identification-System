@@ -17,7 +17,8 @@ def extract_hand_written(gray):
     thresh_inv = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
 
     # Apply noise removal.
-    blur = cv2.blur(thresh_inv, (3, 3))
+    # blur = cv2.blur(thresh_inv, (3, 3))
+    blur = cv2.GaussianBlur(thresh_inv, (3, 3), 0)
 
     # Apply thresholding for better and more general output.
     binary = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
@@ -106,9 +107,14 @@ def preprocessing(img):
     This function pre-process the image and return list of sentences.
     """
     # Extract hand written part
+    #start = time.time()
     segmented_image, segmented_image_original = extract_hand_written(img)
+    #print("extract:", str(time.time() - start))
     # Apply noise removal.
-    segmented_image_original = cv2.blur(segmented_image_original, (3, 3))
+    # cv2.GaussianBlur(segmented_image_original, (3, 3), 0)
+    segmented_image_original = cv2.GaussianBlur(segmented_image_original, (3, 3), 0)
     # Extract sentences
+    #start = time.time()
     sentences = detect_sentences(segmented_image, segmented_image_original)
+    #print("detect:", str(time.time() - start))
     return sentences

@@ -6,8 +6,9 @@ from threading import Thread
 def feature_extractor(images):
     # initialize the local binary patterns descriptor along with
     # the data and label lists
-    start = time.time()
+    # start = time.time()
     desc = LocalBinaryPatterns(8, 3)
+    """
     data_arr = [[]] * 3
     labels_arr = [[]] * 3
     feature_extraction_threads = [None] * 3
@@ -16,12 +17,30 @@ def feature_extractor(images):
         feature_extraction_threads[j] = Thread(target=writer_feature_extraction, args=(images[j], desc,
                                                                                        labels_arr, data_arr, j))
         feature_extraction_threads[j].start()
+    """
+    data_arr_1 = []
+    labels_arr_1 = []
+    data_arr_2 = []
+    labels_arr_2 = []
+    data_arr_3 = []
+    labels_arr_3 = []
+    feature_extraction_threads = [None] * 3
 
+    feature_extraction_threads[0] = Thread(target=writer_feature_extraction, args=(images[0], desc,
+                                                                                   labels_arr_1, data_arr_1, 1))
+    feature_extraction_threads[0].start()
+    feature_extraction_threads[1] = Thread(target=writer_feature_extraction, args=(images[1], desc,
+                                                                                   labels_arr_2, data_arr_2, 2))
+    feature_extraction_threads[1].start()
+    feature_extraction_threads[2] = Thread(target=writer_feature_extraction, args=(images[2], desc,
+                                                                                   labels_arr_3, data_arr_3, 3))
+    feature_extraction_threads[2].start()
     for j in range(len(feature_extraction_threads)):
         feature_extraction_threads[j].join()
 
-    data = data_arr[0] + data_arr[1] + data_arr[2]
-    labels = labels_arr[0] + labels_arr[1] + labels_arr[2]
+    data = data_arr_1 + data_arr_2 + data_arr_3
+    labels = labels_arr_1 + labels_arr_2 + labels_arr_3
+    # print(labels)
     """
     # loop over the training images
     for img in imgs_1:
@@ -46,8 +65,8 @@ def feature_extractor(images):
         labels.append("3")
         data.append(hist)
     """
-    end = time.time()
-    print("Writers feature extraction time:" + str(end - start))
+    # end = time.time()
+    # print("Writers feature extraction time:" + str(end - start))
     return data, labels, desc
 
 
@@ -57,8 +76,8 @@ def writer_feature_extraction(images, desc, labels, data, index):
         hist = desc.describe(img)
         # extract the label from the image path, then update the
         # label and data lists
-        labels[index].append(str(index + 1))
-        data[index].append(hist)
+        labels.append(str(index))
+        data.append(hist)
 
 
 def test(model, imgs, desc):

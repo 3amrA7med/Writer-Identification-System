@@ -37,12 +37,12 @@ def writer_identification(generate, number_of_test_cases):
     accurate = 0
     avg_time = []
     file_names = ["1/1.PNG",
-                 "1/2.PNG",
-                 "2/1.PNG",
-                 "2/2.PNG",
-                 "3/1.PNG",
-                 "3/2.PNG",
-                 "test.png"]
+                  "1/2.PNG",
+                  "2/1.PNG",
+                  "2/2.PNG",
+                  "3/1.PNG",
+                  "3/2.PNG",
+                  "test.png"]
     for i in range(number_of_test_cases):
         path = "./test/"
         if i < 9:
@@ -53,7 +53,7 @@ def writer_identification(generate, number_of_test_cases):
         sentences = [None] * 7
         images = [None] * 3
         start_time = time.time()
-        start = time.time()
+        # start = time.time()
         # Open thread to pre-process images
         for j in range(len(preprocessing_threads)):
             preprocessing_threads[j] = Thread(target=read_and_preprocess_image, args=(path+file_names[j], sentences, j))
@@ -62,8 +62,8 @@ def writer_identification(generate, number_of_test_cases):
         for j in range(len(preprocessing_threads)):
             preprocessing_threads[j].join()
 
-        end = time.time()
-        print("Preprocessing time:" + str(end - start))
+        # end = time.time()
+        # print("Preprocessing time:" + str(end - start))
 
         images[0] = sentences[0] + sentences[1]
         images[1] = sentences[2] + sentences[3]
@@ -101,8 +101,12 @@ def writer_identification(generate, number_of_test_cases):
 
 
 def read_and_preprocess_image(path, sentences, index):
-    image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+    # start = time.time()
+    image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)[100:3100, 150:-50]
+    # print("Read Image:", str(time.time() - start))
+    # start = time.time()
     sentences[index] = preprocessing(image)
+    # print(str(time.time()-start))
 
 
 if __name__ == '__main__':

@@ -1,7 +1,5 @@
-import os
-from multiprocessing import Pool
 import numpy as np
-
+from skimage import feature
 
 class LocalBinaryPatterns:
     def __init__(self, numPoints, radius):
@@ -15,7 +13,7 @@ class LocalBinaryPatterns:
         # to build the histogram of patterns
         lbp = get_lbp(image)
         #lbp = feature.local_binary_pattern(image, self.numPoints,
-         #   self.radius, method="default")
+            #self.radius, method="default")
         # lbp = lbp_custom(image)
         #print("lbp time", time.time() - start)
         #start = time.time()
