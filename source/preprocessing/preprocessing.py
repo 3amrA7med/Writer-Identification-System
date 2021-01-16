@@ -5,13 +5,13 @@ import cv2
 import operator
 
 
-def extract_hand_written(img):
+def extract_hand_written(gray):
     """
     This function returns original cropped image and dilated cropped image 
     for the handwritten part only and exclude any unused parts.
     """
     # Extract grayscale
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # Apply binary thresholding using otsu's method to inverse the background and content color.
     thresh_inv = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
@@ -105,13 +105,10 @@ def preprocessing(img):
     """
     This function pre-process the image and return list of sentences.
     """
-    start_time = time.time()
     # Extract hand written part
     segmented_image, segmented_image_original = extract_hand_written(img)
     # Apply noise removal.
     segmented_image_original = cv2.blur(segmented_image_original, (3, 3))
     # Extract sentences
     sentences = detect_sentences(segmented_image, segmented_image_original)
-    end_time = time.time()
-    print("Preprocessing time:"+str(end_time - start_time))
     return sentences
