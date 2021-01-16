@@ -82,16 +82,18 @@ def writer_feature_extraction(images, desc, labels, data, index):
 
 def test(model, imgs, desc):
     # loop over the testing images
-    start = time.time()
     results = []
-    for image in imgs:
-        hist = desc.describe(image)
-        prediction = model.predict(hist.reshape(1, -1))
-        # # display the image and the prediction
-        # cv2.putText(image, prediction[0], (10, 30), cv2.FONT_HERSHEY_SIMPLEX,1.0, (0, 0, 255), 3)
-        # plt.imshow(image,cmap='Greys_r')
-        # plt.title('test')
-        # plt.show()
-        results.append(prediction[0])
-    print("Testing time:" + str(time.time() - start))
+    testing_threads = [None] * len(imgs)
+    results = [None] * len(imgs)
+    for j in range(len(testing_threads)):
+            testing_threads[j] = Thread(target=test_image, args=(model, imgs, desc, results, j))
+            testing_threads[j].start()
+    for j in range(len(testing_threads)):
+            testing_threads[j].join()
     return results
+
+
+def test_image(model, imgs, desc, results, j):
+    hist = desc.describe(imgs[j])
+    prediction = model.predict(hist.reshape(1, -1))
+    results[j] = prediction[0]
