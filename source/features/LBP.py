@@ -13,19 +13,19 @@ class LocalBinaryPatterns:
     def describe(self, image, eps=1e-7):
         # compute the Local Binary Pattern representation
         # of the image, and then use the LBP representation
-        # start = time.time()
+        #start = time.time()
         # to build the histogram of patterns
         lbp = get_lbp(image)
         #lbp = feature.local_binary_pattern(image, self.numPoints,
          #   self.radius, method="default")
         # lbp = lbp_custom(image)
-        # print("lbp time", time.time() - start)
-        # start = time.time()
+        #print("lbp time", time.time() - start)
+        #start = time.time()
 
         (hist, _) = np.histogram(lbp.ravel(),
             bins=np.arange(0, self.numPoints + 3),
             range=(0, self.numPoints + 2))
-        # print("histogram time", time.time() - start)
+        #print("histogram time", time.time() - start)
         # start = time.time()
         # normalize the histogram
         
@@ -118,7 +118,6 @@ def lbp_calculated_pixel(img, x, y, r = 3):
     return val 
 
 
-
 def get_lbp(img):
     # Get image dimensions
     height, width = img.shape
@@ -140,6 +139,7 @@ def get_lbp(img):
         view_lbp |= (res.view(np.uint8) << i)
 
     return lbp
+
 
 def shift(img, shift) -> np.ndarray:
     r, c = shift[0], shift[1]

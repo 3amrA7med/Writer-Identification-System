@@ -5,45 +5,11 @@ from matplotlib import pyplot as plt
 from skimage import feature
 from source.features.LBP import LocalBinaryPatterns
 
-def load_test():
-    # TODO:  this will be removed later from here
-    # Load an color image in grayscale
-    imgs = []
-    directory = './temp2/'
-    test_count = len([name for name in os.listdir(directory) if os.path.isfile(directory+name)])
-
-    for i in range(1,test_count + 1):
-        imgs.append(cv2.imread('./temp2/test'+str(i)+'.JPG'))
-        imgs[i-1] = cv2.cvtColor(imgs[i-1], cv2.COLOR_BGR2GRAY)
-
-    # Load an color image in grayscale
-    imgs_1 = []
-    directory = './temp2/1/'
-    count_1 = len([name for name in os.listdir(directory) if os.path.isfile(directory+name)])
-    for i in range(1,count_1+1):
-        imgs_1.append(cv2.imread('./temp2/1/'+str(i)+'.PNG'))
-        imgs_1[i-1] = cv2.cvtColor(imgs_1[i-1], cv2.COLOR_BGR2GRAY)
-    directory = './temp2/2/'
-    count_2 = len([name for name in os.listdir(directory) if os.path.isfile(directory + name)])
-    imgs_2 = []
-    for i in range(1,count_2+1):
-        imgs_2.append(cv2.imread('./temp2/2/'+str(i)+'.PNG'))
-        imgs_2[i-1] = cv2.cvtColor(imgs_2[i-1], cv2.COLOR_BGR2GRAY)
-    imgs_3 = []
-    directory = './temp2/3/'
-    count_3 = len([name for name in os.listdir(directory) if os.path.isfile(directory+name)])
-
-    for i in range(1,count_3+1):
-        imgs_3.append(cv2.imread('./temp2/3/'+str(i)+'.PNG'))
-        imgs_3[i-1] = cv2.cvtColor(imgs_3[i-1], cv2.COLOR_BGR2GRAY)
-
-    return imgs,imgs_1,imgs_2,imgs_3
-    # TODO:  this will be removed later to here
-
 
 def feature_extractor(imgs_1, imgs_2, imgs_3):
     # initialize the local binary patterns descriptor along with
     # the data and label lists
+    start = time.time()
     desc = LocalBinaryPatterns(8, 3)
     data = []
     labels = []
@@ -70,11 +36,14 @@ def feature_extractor(imgs_1, imgs_2, imgs_3):
         # label and data lists
         labels.append("3")
         data.append(hist)
-
+    end = time.time()
+    print("Writers feature extraction time:" + str(end - start))
     return data, labels, desc
+
 
 def test(model, imgs, desc):
     # loop over the testing images
+    start = time.time()
     results = []
     for image in imgs:
         hist = desc.describe(image)
@@ -85,4 +54,5 @@ def test(model, imgs, desc):
         # plt.title('test')
         # plt.show()
         results.append(prediction[0])
+    print("Testing time:" + str(time.time() - start))
     return results

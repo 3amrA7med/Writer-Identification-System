@@ -57,13 +57,12 @@ def extract_hand_written(img):
     second_crop_line_height = lines[2][1]
 
     # Crop the original image and the dilated image
-    segmented_image = np.copy(img_dilation[first_crop_line_height + 10:second_crop_line_height - 10, :])
-    segmented_image_original = np.copy(gray[first_crop_line_height + 10:second_crop_line_height - 10, :])
-    segmented_image_binary = np.copy(binary[first_crop_line_height + 10:second_crop_line_height - 10, :])
-    return segmented_image, segmented_image_original, segmented_image_binary
+    segmented_image = img_dilation[first_crop_line_height + 10:second_crop_line_height - 10, :]
+    segmented_image_original = gray[first_crop_line_height + 10:second_crop_line_height - 10, :]
+    return segmented_image, segmented_image_original
 
 
-def detect_sentences(segmented_image, segmented_image_original, segmented_image_binary):
+def detect_sentences(segmented_image, segmented_image_original):
     """
     This function detect sentences and return a list of detected sentences.
     """
@@ -84,8 +83,6 @@ def detect_sentences(segmented_image, segmented_image_original, segmented_image_
         bounding_rectangles[i] = cv2.boundingRect(contours[i])
 
     sentences = []
-    # binary
-    binary_sentences = []
     # Loop on the contours and crop each sentence
     i = len(contours) - 1
     while i >= 0:
@@ -99,14 +96,7 @@ def detect_sentences(segmented_image, segmented_image_original, segmented_image_
                                                                            + difference_in_height,
                                    int(bounding_rectangles[i][0]) + 50:int(bounding_rectangles[i][0])
                                                                        + difference_in_width - 50])
-            # binary
-            binary_sentence = np.copy(segmented_image_original[initial_height:int(bounding_rectangles[i][1])
-                                                                              + difference_in_height,
-                                      int(bounding_rectangles[i][0]) + 50:int(bounding_rectangles[i][0])
-                                                                          + difference_in_width - 50])
             sentences.append(seg_sentence)
-            # binary
-            binary_sentences.append(binary_sentence)
         i -= 1
     return sentences
 
@@ -115,13 +105,13 @@ def preprocessing(img):
     """
     This function pre-process the image and return list of sentences.
     """
-    # start_time = time.time()
+    start_time = time.time()
     # Extract hand written part
-    segmented_image, segmented_image_original, segmented_image_binary = extract_hand_written(img)
+    segmented_image, segmented_image_original = extract_hand_written(img)
     # Apply noise removal.
     segmented_image_original = cv2.blur(segmented_image_original, (3, 3))
     # Extract sentences
-    sentences, binary_sentences = detect_sentences(segmented_image, segmented_image_original, segmented_image_binary)
-    # end_time = time.time()
-    # print("Preprocessing time:"+str(end_time - start_time))
-    return sentences, binary_sentences
+    sentences = detect_sentences(segmented_image, segmented_image_original)
+    end_time = time.time()
+    print("Preprocessing time:"+str(end_time - start_time))
+    return sentences

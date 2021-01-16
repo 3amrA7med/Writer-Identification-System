@@ -7,15 +7,16 @@ import time
 
 def classifier(data, labels):
     # train a Linear SVM on the data
-    # start_time = time.time()
+    start_time = time.time()
     # model = LinearSVC(random_state = 0)
     # model.fit(data, labels)
 
     model = make_pipeline(StandardScaler(), LinearSVC(random_state=0, tol=1e-5))
     model.fit(data, labels)
-    # end_time = time.time()
-    # print("applying classifier time: ", end_time - start_time)
+    end_time = time.time()
+    print("Classifier time: ", end_time - start_time)
     return model
+
 
 def vote_result(results):
     count = [0] * 3
