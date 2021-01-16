@@ -9,3 +9,5 @@ dataset/
 __pycache__
 
 temp2/
+
+test_results.txt

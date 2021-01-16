@@ -3,9 +3,7 @@ import os
 import cv2
 from matplotlib import pyplot as plt
 from skimage import feature
-from sklearn.svm import LinearSVC
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler
+from source.features.LBP import LocalBinaryPatterns
 
 def load_test():
     # TODO:  this will be removed later from here
@@ -42,10 +40,10 @@ def load_test():
     return imgs,imgs_1,imgs_2,imgs_3
     # TODO:  this will be removed later to here
 
-def feature_extractor(imgs_1,imgs_2,imgs_3,desc):
+def feature_extractor(imgs_1,imgs_2,imgs_3):
     # initialize the local binary patterns descriptor along with
     # the data and label lists
-    # desc = LocalBinaryPatterns(24, 8)
+    desc = LocalBinaryPatterns(4, 3)
     data = []
     labels = []
 
@@ -72,27 +70,18 @@ def feature_extractor(imgs_1,imgs_2,imgs_3,desc):
         labels.append("3")
         data.append(hist)
 
-    return data,labels
-
-def classifier(data, labels):
-    # train a Linear SVM on the data
-    start_time = time.time()
-    # model = LinearSVC(random_state = 0)
-    # model.fit(data, labels)
-
-    model = make_pipeline(StandardScaler(), LinearSVC(random_state=0, tol=1e-5))
-    model.fit(data, labels)
-    end_time = time.time()
-    print("apllying classifier time: ", end_time - start_time)
-    return model
+    return data, labels, desc
 
 def test(model, imgs, desc):
     # loop over the testing images
+    results = []
     for image in imgs:
         hist = desc.describe(image)
         prediction = model.predict(hist.reshape(1, -1))
-        # display the image and the prediction
-        cv2.putText(image, prediction[0], (10, 30), cv2.FONT_HERSHEY_SIMPLEX,1.0, (0, 0, 255), 3)
-        plt.imshow(image,cmap='Greys_r')
-        plt.title('test')
-        plt.show()
+        # # display the image and the prediction
+        # cv2.putText(image, prediction[0], (10, 30), cv2.FONT_HERSHEY_SIMPLEX,1.0, (0, 0, 255), 3)
+        # plt.imshow(image,cmap='Greys_r')
+        # plt.title('test')
+        # plt.show()
+        results.append(prediction[0])
+    return results
