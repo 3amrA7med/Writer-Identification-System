@@ -3,11 +3,11 @@ from source.features.LBP import LocalBinaryPatterns
 from threading import Thread
 
 
-def feature_extractor(images):
+def feature_extractor(images, accuracy):
     # initialize the local binary patterns descriptor along with
     # the data and label lists
     # start = time.time()
-    desc = LocalBinaryPatterns(8, 3)
+    desc = LocalBinaryPatterns(accuracy)
     """
     data_arr = [[]] * 3
     labels_arr = [[]] * 3

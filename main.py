@@ -12,7 +12,10 @@ from threading import Thread
               help='Generate test cases.', required=True, default=False)
 @click.option('-n', '--number_of_test_cases', required=True,  type=click.types.INT,
               help='Number of test cases to generate.', default=100)
-def writer_identification(generate, number_of_test_cases):
+@click.option('-a', '--accuracy', required=False,  type=click.types.INT, default=1,
+              help='Accuracy vs Performance. Values: [ 1, 2, 3]. 3 being highest accuracy, 1 being highest performance.')
+
+def writer_identification(generate, number_of_test_cases, accuracy):
     """
     Writer identification function
     :param generate: boolean to generate test cases
@@ -84,7 +87,7 @@ def writer_identification(generate, number_of_test_cases):
 
         # program logic here
         # Extract features from the three writers
-        data, labels, desc = feature_extractor(total_sentences)
+        data, labels, desc = feature_extractor(total_sentences, accuracy)
 
         # Train a SVM Classifier
         model = classifier(data, labels)
