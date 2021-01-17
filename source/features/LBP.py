@@ -7,7 +7,8 @@ class LocalBinaryPatterns:
         self.numPoints = numPoints
         self.radius = radius
     def describe(self, image, eps=1e-7):
-        accuracy = True
+        accuracy = 3
+
         # compute the Local Binary Pattern representation
         # of the image, and then use the LBP representation
         #start = time.time()
@@ -18,7 +19,10 @@ class LocalBinaryPatterns:
         # lbp = lbp_custom(image)
         #print("lbp time", time.time() - start)
         #start = time.time()
-        if accuracy:
+        
+        if accuracy == 3:
+            self.numPoints = 24
+        elif accuracy == 2:
             self.numPoints = 16
         else:
             self.numPoints = 8
@@ -47,12 +51,11 @@ class LocalBinaryPatterns:
         j = 2
         k = 1
         loop = 8
-        accuracy_awi = true
-        if accuracy:
+        if accuracy == 2:
             dx = [0, v, v, v, 0, -v, -v, -v, 0, j, j, j, 0, -j, -j, -j]
             dy = [v, v, 0, -v, -v, -v, 0, v, j, j, 0, -j, -j, -j, 0, j]
             loop = 16
-        elif (accuracy and accuracy_awi):
+        elif accuracy == 3:
             dx = [0, v, v, v, 0, -v, -v, -v, 0, j, j, j, 0, -j, -j, -j, 0, k, k, k, 0, -k, -k, -k]
             dy = [v, v, 0, -v, -v, -v, 0, v, j, j, 0, -j, -j, -j, 0, j, k, k, 0, -k, -k, -k, 0, k]
             loop = 24
