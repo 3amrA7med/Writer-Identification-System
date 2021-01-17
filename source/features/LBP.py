@@ -18,7 +18,7 @@ class LocalBinaryPatterns:
         # lbp = lbp_custom(image)
         #print("lbp time", time.time() - start)
         #start = time.time()
-        if (accuracy)
+        if accuracy:
             self.numPoints = 16
         else:
             self.numPoints = 8
@@ -45,11 +45,17 @@ class LocalBinaryPatterns:
         # Directions
         v = 3
         j = 2
+        k = 1
         loop = 8
+        accuracy_awi = true
         if accuracy:
-            dx = [0, v, v, v, 0, -v, -v, -v,0, j, j, j, 0, -j, -j, -j]
-            dy = [v, v, 0, -v, -v, -v, 0, v,j, j, 0, -j, -j, -j, 0, j]
+            dx = [0, v, v, v, 0, -v, -v, -v, 0, j, j, j, 0, -j, -j, -j]
+            dy = [v, v, 0, -v, -v, -v, 0, v, j, j, 0, -j, -j, -j, 0, j]
             loop = 16
+        elif (accuracy and accuracy_awi):
+            dx = [0, v, v, v, 0, -v, -v, -v, 0, j, j, j, 0, -j, -j, -j, 0, k, k, k, 0, -k, -k, -k]
+            dy = [v, v, 0, -v, -v, -v, 0, v, j, j, 0, -j, -j, -j, 0, j, k, k, 0, -k, -k, -k, 0, k]
+            loop = 24
         else:
             dx = [0, v, v, v, 0, -v, -v, -v]
             dy = [v, v, 0, -v, -v, -v, 0, v]
