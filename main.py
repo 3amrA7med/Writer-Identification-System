@@ -69,15 +69,13 @@ def writer_identification(generate, number_of_test_cases, accuracy):
         sentences = [None] * 7
         total_sentences = [None] * 3
         start_time = time.time()
-        # start = time.time()
-        # Open thread to pre-process images
+        # Open threads to pre-process images
         for j in range(len(preprocessing_threads)):
             preprocessing_threads[j] = Thread(target=preprocess_image, args=(images, sentences, j))
             preprocessing_threads[j].start()
 
         for j in range(len(preprocessing_threads)):
             preprocessing_threads[j].join()
-
         # end = time.time()
         # print("Preprocessing time:" + str(end - start))
 
@@ -85,7 +83,6 @@ def writer_identification(generate, number_of_test_cases, accuracy):
         total_sentences[1] = sentences[2] + sentences[3]
         total_sentences[2] = sentences[4] + sentences[5]
 
-        # program logic here
         # Extract features from the three writers
         data, labels, desc = feature_extractor(total_sentences, accuracy)
 
@@ -102,6 +99,7 @@ def writer_identification(generate, number_of_test_cases, accuracy):
         winner = vote_result(results)
         if winner == test_results[i]:
             print("Test#" + str(i+1) + " succeeded")
+            f_results.write(str(winner) + "\n")
             accurate += 1
         else:
             print("Test#" + str(i+1) + " failed")
@@ -111,7 +109,6 @@ def writer_identification(generate, number_of_test_cases, accuracy):
         print("Total is", total, "of which", accurate, "are accurate")
         print("Accuracy is", float(accurate)/total*100, "%")
         print("Average Time:" + str(float(sum(avg_time))/len(avg_time)))
-
     f_time.close()
     f_results.close()
 
