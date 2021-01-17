@@ -43,30 +43,45 @@ def writer_identification(generate, number_of_test_cases):
                   "3/1.PNG",
                   "3/2.PNG",
                   "test.png"]
+
     for i in range(number_of_test_cases):
         path = "./test/"
+        images = [None] * 7
+        files_loading_threads = [None] * 7
+        
         if i < 9:
             path = path + str(0) + str(i+1) + "/"
         else:
             path = path + str(i+1) + "/"
+    
+        for j in range(len(files_loading_threads)):
+                    files_loading_threads[j] = Thread(target=read_image, args=(path+file_names[j], images, j))
+                    files_loading_threads[j].start()
+        
+        for j in range(len(files_loading_threads)):
+                    files_loading_threads[j].join()
+
+            
         preprocessing_threads = [None] * 7
         sentences = [None] * 7
-        images = [None] * 3
+        total_sentences = [None] * 3
         start_time = time.time()
         # Open threads to pre-process images
         for j in range(len(preprocessing_threads)):
-            preprocessing_threads[j] = Thread(target=read_and_preprocess_image, args=(path+file_names[j], sentences, j))
+            preprocessing_threads[j] = Thread(target=preprocess_image, args=(images, sentences, j))
             preprocessing_threads[j].start()
 
         for j in range(len(preprocessing_threads)):
             preprocessing_threads[j].join()
+        # end = time.time()
+        # print("Preprocessing time:" + str(end - start))
 
-        images[0] = sentences[0] + sentences[1]
-        images[1] = sentences[2] + sentences[3]
-        images[2] = sentences[4] + sentences[5]
+        total_sentences[0] = sentences[0] + sentences[1]
+        total_sentences[1] = sentences[2] + sentences[3]
+        total_sentences[2] = sentences[4] + sentences[5]
 
         # Extract features from the three writers
-        data, labels, desc = feature_extractor(images)
+        data, labels, desc = feature_extractor(total_sentences)
 
         # Train a SVM Classifier
         model = classifier(data, labels)
@@ -95,9 +110,12 @@ def writer_identification(generate, number_of_test_cases):
     f_results.close()
 
 
-def read_and_preprocess_image(path, sentences, index):
-    image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)[100:3100, 150:-50]
-    sentences[index] = preprocessing(image)
+def read_image(path,images,index):
+    images[index] = cv2.imread(path, cv2.IMREAD_GRAYSCALE)[100:3100, 150:-50]
+
+
+def preprocess_image(images, sentences, index):
+    sentences[index] = preprocessing(images[index])
 
 
 if __name__ == '__main__':
