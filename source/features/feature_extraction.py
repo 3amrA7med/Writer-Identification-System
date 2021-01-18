@@ -3,8 +3,10 @@ from threading import Thread
 
 
 def feature_extractor(images, accuracy):
-    # initialize the local binary patterns descriptor along with
-    # the data and label lists
+    """
+    This function reads returns histograms accompanied with their labels, also returns descriptor used for feature extraction.
+    """
+
     desc = LocalBinaryPatterns(accuracy)
     data_arr_1 = []
     labels_arr_1 = []
@@ -28,10 +30,14 @@ def feature_extractor(images, accuracy):
 
     data = data_arr_1 + data_arr_2 + data_arr_3
     labels = labels_arr_1 + labels_arr_2 + labels_arr_3
+
     return data, labels, desc
 
 
 def writer_feature_extraction(images, desc, labels, data, index):
+    """
+    This function loops through images within the thread and modifies their labels and data.
+    """
     for img in images:
         # load the image, convert it to grayscale, and describe it
         hist = desc.describe(img)
@@ -42,6 +48,10 @@ def writer_feature_extraction(images, desc, labels, data, index):
 
 
 def test(model, imgs, desc):
+    """
+    This function runs classification on test image in multiple threads and returns their results
+    """
+    
     # loop over the testing images
     testing_threads = [None] * len(imgs)
     results = [None] * len(imgs)
