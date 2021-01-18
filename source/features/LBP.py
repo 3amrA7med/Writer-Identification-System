@@ -1,5 +1,5 @@
 import numpy as np
-from skimage import feature
+
 
 class LocalBinaryPatterns:
     def __init__(self, accuracy):
@@ -11,29 +11,25 @@ class LocalBinaryPatterns:
             self.numPoints = 16
         else:
             self.numPoints = 24
-        
-        
+
     def describe(self, image, eps=1e-7):
-        # compute the Local Binary Pattern representation
-        # of the image, and then use the LBP representation
-        # to build the histogram of patterns
-        
+        """
+        compute the Local Binary Pattern representation
+        of the image, and then use the LBP representation
+        to build the histogram of patterns
+        :param image: image used to extract features
+        :param eps:
+        :return: histogram
+        """
+
         lbp = self.get_lbp(image)
-        #lbp = feature.local_binary_pattern(image, self.numPoints,
-            #self.radius, method="default")
-        # lbp = lbp_custom(image)
-        
-        
-        (hist, _) = np.histogram(lbp.ravel(),
-            bins=np.arange(0, self.numPoints + 3),
-            range=(0, self.numPoints + 2))
+        # Find histrogram
+        (hist, _) = np.histogram(lbp.ravel(), bins=np.arange(0, self.numPoints + 3), range=(0, self.numPoints + 2))
 
         # normalize the histogram
-        
         hist = hist.astype("float")
         hist /= (hist.sum() + eps)
         return hist
-
 
     def get_lbp(self, img):
         # Get image dimensions
@@ -55,7 +51,6 @@ class LocalBinaryPatterns:
         else:
             dx = [0, v, v, v, 0, -v, -v, -v, 0, j, j, j, 0, -j, -j, -j, 0, k, k, k, 0, -k, -k, -k]
             dy = [v, v, 0, -v, -v, -v, 0, v, j, j, 0, -j, -j, -j, 0, j, k, k, 0, -k, -k, -k, 0, k]
-            
 
         # Loop over the 8 neighbors
         for i in range(self.numPoints):
@@ -66,10 +61,8 @@ class LocalBinaryPatterns:
             view_lbp |= (res.view(np.uint8) << i)
         return lbp
 
-
-    def shift(self, img, shift) -> np.ndarray:
+    def shift(self, img, shift):
         r, c = shift[0], shift[1]
-
         if r >= 0:
             ret = img[r:, :]
         else:
@@ -79,5 +72,4 @@ class LocalBinaryPatterns:
             ret = ret[:, c:]
         else:
             ret = ret[:, 0:c]
-
         return ret
