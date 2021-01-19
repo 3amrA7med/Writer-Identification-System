@@ -6,14 +6,15 @@ from source.classifier.classifier import classifier, vote_result
 from source.test_generation.test_generator import generate_tests
 import click
 from threading import Thread
+import os 
 
 
 @click.command()
 @click.option('-g', '--generate', type=bool,
               help='Generate test cases.', required=True, default=False)
 @click.option('-n', '--number_of_test_cases', required=True,  type=click.types.INT,
-              help='Number of test cases to generate.', default=100)
-@click.option('-a', '--accuracy', required=False,  type=click.types.INT, default=1,
+              help='Number of test cases to generate.', default=-1)
+@click.option('-a', '--accuracy', required=False,  type=click.types.INT, default=3,
               help='Accuracy vs Performance. Values: [ 1, 2, 3]. 3 being highest accuracy, 1 being highest performance.')
 def writer_identification(generate, number_of_test_cases, accuracy):
     """
@@ -22,9 +23,16 @@ def writer_identification(generate, number_of_test_cases, accuracy):
     :param number_of_test_cases: number of test case to generate
     :param accuracy: determine accuracy level to be used by writer identification system classifier.
     """
-
+    testing_project = False
+    used_dir = ""
+    if number_of_test_cases == -1:
+        number_of_test_cases = len(next(os.walk('./data/'))[1])
+        used_dir = "./data/"
+        testing_project = True
+    else: 
+        used_dir = "./test/"
     # Generate test cases
-    if generate:
+    if generate and not testing_project:
         generate_tests(number_of_test_cases)
         return
     # Open files used to save the output and read test results
@@ -32,9 +40,9 @@ def writer_identification(generate, number_of_test_cases, accuracy):
     f_results = open('./output/results.txt', 'w')
     f = open("test_results.txt", "r")
     test_results = f.readlines()
-
-    for i in range(0, len(test_results)):
-        test_results[i] = int(test_results[i])
+    if not testing_project:
+        for i in range(0, len(test_results)):
+            test_results[i] = int(test_results[i])
 
     total = 0
     accurate = 0
@@ -48,7 +56,7 @@ def writer_identification(generate, number_of_test_cases, accuracy):
                   "test.png"]
     # program main loop
     for i in range(number_of_test_cases):
-        path = "./test/"
+        path = used_dir 
         images = [None] * 7
         files_loading_threads = [None] * 7
         
@@ -96,14 +104,15 @@ def writer_identification(generate, number_of_test_cases, accuracy):
         # Vote on classification
         winner = vote_result(results)
         f_results.write(str(winner) + "\n")
-        if winner == test_results[i]:
-            print("Test#" + str(i+1) + " succeeded")
-            accurate += 1
-        else:
-            print("Test#" + str(i+1) + " failed")
-        total += 1
+        if not testing_project:
+            if winner == test_results[i]:
+                print("Test#" + str(i+1) + " succeeded")
+                accurate += 1
+            else:
+                print("Test#" + str(i+1) + " failed")
+            total += 1
 
-    if total > 0:
+    if total > 0 and not testing_project:
         print("Total is", total, "of which", accurate, "are accurate")
         print("Accuracy is", float(accurate)/total*100, "%")
         print("Average Time:" + str(float(sum(avg_time))/len(avg_time)))

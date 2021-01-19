@@ -1,4 +1,79 @@
 import numpy as np
+from commonfunctions import show_images
+from skimage import feature
+
+def get_pixel(img, center, x, y): 
+    new_value = 0
+        
+    try: 
+        # If local neighbourhood pixel  
+        # value is greater than or equal 
+        # to center pixel values then  
+        # set it to 1 
+        if img[x][y] >= center: 
+            new_value = 1
+                
+    except: 
+        # Exception is required when  
+        # neighbourhood value of a center 
+        # pixel value is null i.e. values 
+        # present at boundaries. 
+        pass
+        
+    return new_value 
+
+# Function for calculating LBP 
+def lbp_calculated_pixel(img, x, y): 
+
+    center = img[x][y] 
+
+    val_ar = [] 
+        
+    # top_left 
+    val_ar.append(get_pixel(img, center, x-1, y-1)) 
+        
+    # top 
+    val_ar.append(get_pixel(img, center, x-1, y)) 
+        
+    # top_right 
+    val_ar.append(get_pixel(img, center, x-1, y + 1)) 
+        
+    # right 
+    val_ar.append(get_pixel(img, center, x, y + 1)) 
+        
+    # bottom_right 
+    val_ar.append(get_pixel(img, center, x + 1, y + 1)) 
+        
+    # bottom 
+    val_ar.append(get_pixel(img, center, x + 1, y)) 
+        
+    # bottom_left 
+    val_ar.append(get_pixel(img, center, x + 1, y-1)) 
+        
+    # left 
+    val_ar.append(get_pixel(img, center, x, y-1)) 
+        
+    # Now, we need to convert binary 
+    # values to decimal 
+    power_val = [1, 2, 4, 8, 16, 32, 64, 128] 
+
+    val = 0
+        
+    for i in range(len(val_ar)): 
+        val += val_ar[i] * power_val[i] 
+            
+    return val 
+
+def custom_lbp(img):
+    height, width = img.shape 
+    img_lbp = np.zeros((height, width), 
+                   np.uint8) 
+   
+    for i in range(0, height): 
+        for j in range(0, width): 
+            img_lbp[i, j] = lbp_calculated_pixel(img, i, j) 
+    return img_lbp
+
 
 
 class LocalBinaryPatterns:
@@ -23,6 +98,9 @@ class LocalBinaryPatterns:
         """
 
         lbp = self.get_lbp(image)
+        # lbp = custom_lbp(image)
+        # lbp = feature.local_binary_pattern(image, 8, 3, method='default')
+
         # Find histrogram
         (hist, _) = np.histogram(lbp.ravel(), bins=np.arange(0, self.numPoints + 3), range=(0, self.numPoints + 2))
 
@@ -73,3 +151,4 @@ class LocalBinaryPatterns:
         else:
             ret = ret[:, 0:c]
         return ret
+
