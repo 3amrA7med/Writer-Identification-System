@@ -37,7 +37,7 @@ def generate_tests(M = 100):            # M is the number of randomly generated 
         else:
             path = path + str(i+1)
 
-        if (i + 1 % 50) == 0:
+        if ((i + 1) % 50) == 0:
             print(str(i + 1) + " test generated")
         # Create folder for each test case
         Path(path).mkdir(parents=True, exist_ok=True)
